@@ -1,7 +1,7 @@
 import btoa from 'btoa';
+import fetch from 'node-fetch';
 
 import { BitbucketPluginConfig } from '../bitbucketPlugnConfig';
-import { fetch } from '../fetch';
 
 export async function verifyConditions(pluginConfig: BitbucketPluginConfig) {
   if (!process.env.BITBUCKET_USER) {
@@ -25,7 +25,7 @@ export async function verifyConditions(pluginConfig: BitbucketPluginConfig) {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error(response.statusText);
+        throw new Error(`${response.status} ${response.statusText}`);
       }
     })
     .then((data) => {

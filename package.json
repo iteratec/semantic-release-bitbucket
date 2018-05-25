@@ -27,7 +27,8 @@
     "access": "public"
   },
   "dependencies": {
-    "btoa": "^1.2.1"
+    "btoa": "^1.2.1",
+    "node-fetch": "^2.1.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^6.2.0",
@@ -37,12 +38,14 @@
     "@types/chai-as-promised": "^7.1.0",
     "@types/mocha": "^5.2.0",
     "@types/node": "^10.1.2",
+    "@types/node-fetch": "^1.6.9",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "commitizen": "^2.9.6",
     "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
     "ghooks": "^2.0.4",
+    "keytar": "^4.2.1",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.2",
     "semantic-release": "^15.5.0",

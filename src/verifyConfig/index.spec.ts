@@ -1,5 +1,7 @@
 import { expect, use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import * as keytar from 'keytar';
+
 import { verifyConditions } from '.';
 import { BitbucketPluginConfig } from '../bitbucketPlugnConfig';
 
@@ -11,7 +13,7 @@ describe('semantic-release-bitbucket', function() {
 
   describe('verifyConditions', function() {
 
-    afterEach(function() {
+    beforeEach(function() {
       process.env.BITBUCKET_USER = '';
       process.env.BITBUCKET_PASSWORD = '';
     });
@@ -48,8 +50,23 @@ describe('semantic-release-bitbucket', function() {
         },
         verifyConditions: [''],
       };
-      expect(verifyConditions(config))
+      return expect(verifyConditions(config))
         .to.eventually.be.rejectedWith('\'repositoryName\' must be set in the publish config section.');
+    });
+
+    it.skip('should attempt to login', async function() {
+      await keytar.findCredentials('bitbucket').then((credentials) => {
+        // In the typings for keytar in version 4.2.1 findCredentials() returns an object instead of an array
+        process.env.BITBUCKET_USER = credentials[0].account;
+        process.env.BITBUCKET_PASSWORD = credentials[0].password;
+      });
+      const config: BitbucketPluginConfig = {
+        publish: {
+          repositoryName: 'test',
+        },
+        verifyConditions: [''],
+      };
+      return expect(verifyConditions(config)).to.eventually.be.fulfilled;
     });
 
   });
