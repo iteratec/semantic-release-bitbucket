@@ -4,6 +4,8 @@
   "description": "a semantic-release plugin for bitbucket",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf dist && tsc",
+    "postbuild": "cpx package.json dist/ && cpx package-lock.json dist/",
     "commit": "git-cz",
     "semantic-release": "semantic-release",
     "test": "mocha -r chai -r chai-as-promised -r ts-node/register src/**/*.spec.ts"
