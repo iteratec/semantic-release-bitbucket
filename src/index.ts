@@ -1,24 +1,24 @@
-import { BitbucketPublishConfig } from './bitbucketPlugnConfig';
+import SemanticReleaseConfig from './@types/SemanticReleaseConfig';
+import SemanticReleaseContext from './@types/SemanticReleaseContext';
 import { publish as publishBitbucket } from './publish';
-import { PublishParams } from './PublishParams';
 import { verifyConditions as verifyBitbucket} from './verifyConfig';
 
 let verified: boolean;
 
-async function verifyConditions(pluginConfig: BitbucketPublishConfig) {
-  return verifyBitbucket(pluginConfig).then((success: boolean) => {
+async function verifyConditions(pluginConfig: SemanticReleaseConfig, context: SemanticReleaseContext) {
+  return verifyBitbucket(pluginConfig, context).then((success: boolean) => {
     verified = success;
   });
 }
 
-async function publish(pluginConfig: BitbucketPublishConfig, params: PublishParams) {
+async function publish(pluginConfig: SemanticReleaseConfig, context: SemanticReleaseContext) {
   if (!verified) {
-    await verifyBitbucket(pluginConfig);
+    await verifyBitbucket(pluginConfig, context);
   }
-  return publishBitbucket(pluginConfig, params);
+  return publishBitbucket(pluginConfig, context);
 }
 
-export default {
+export {
   publish,
   verifyConditions,
 };

@@ -3,6 +3,9 @@ import chaiAsPromised from 'chai-as-promised';
 import * as keytar from 'keytar';
 
 import { verifyConditions } from '.';
+import SemanticReleaseConfig from '../@types/SemanticReleaseConfig';
+import SemanticReleaseContext from '../@types/SemanticReleaseContext';
+import { SemanticReleasePlugin } from '../@types/SemanticReleasePlugin';
 import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
 
 describe('semantic-release-bitbucket', function() {
@@ -12,36 +15,79 @@ describe('semantic-release-bitbucket', function() {
   });
 
   describe('verifyConditions', function() {
+    let config: SemanticReleaseConfig;
 
     beforeEach(function() {
       process.env.BITBUCKET_USER = '';
       process.env.BITBUCKET_PASSWORD = '';
+      config = {
+        branch: '',
+        noCi: true,
+        repositoryUrl: '',
+        tagFormat: '',
+      };
     });
 
     it('should fail if BITBUCKET_USER is not set', function() {
-      const config: BitbucketPublishConfig = {
-        repositoryName: '',
+      const context: SemanticReleaseContext = {
+        logger: {
+          // tslint:disable-next-line:no-empty
+          log: (message: string) => {}},
+        options: {
+          branch: '',
+          noCi: true,
+          publish: [{
+            path: '@iteratec/semantic-release-bitbucket',
+            repositoryName: '',
+          } as BitbucketPublishConfig & SemanticReleasePlugin],
+          repositoryUrl: '',
+          tagFormat: '',
+        },
       };
-      return expect(verifyConditions(config))
+      return expect(verifyConditions(config, context))
         .to.eventually.be.rejectedWith('Environment variable BITBUCKET_USER is not set.');
     });
 
     it('should fail if BITBUCKET_PASSWORD is not set', function() {
       process.env.BITBUCKET_USER = 'test';
-      const config: BitbucketPublishConfig = {
-        repositoryName: '',
+      const context: SemanticReleaseContext = {
+        logger: {
+          // tslint:disable-next-line:no-empty
+          log: (message: string) => {}},
+        options: {
+          branch: '',
+          noCi: true,
+          publish: [{
+            path: '@iteratec/semantic-release-bitbucket',
+            repositoryName: '',
+          } as BitbucketPublishConfig & SemanticReleasePlugin],
+          repositoryUrl: '',
+          tagFormat: '',
+        },
       };
-      return expect(verifyConditions(config))
+      return expect(verifyConditions(config, context))
         .to.eventually.be.rejectedWith('Environment variable BITBUCKET_PASSWORD is not set.');
     });
 
     it('should fail if the name of the repository is not set in the config', function() {
       process.env.BITBUCKET_USER = 'test';
       process.env.BITBUCKET_PASSWORD = 'test';
-      const config: BitbucketPublishConfig = {
-        repositoryName: '',
+      const context: SemanticReleaseContext = {
+        logger: {
+          // tslint:disable-next-line:no-empty
+          log: (message: string) => {}},
+        options: {
+          branch: '',
+          noCi: true,
+          publish: [{
+            path: '@iteratec/semantic-release-bitbucket',
+            repositoryName: '',
+          } as BitbucketPublishConfig & SemanticReleasePlugin],
+          repositoryUrl: '',
+          tagFormat: '',
+        },
       };
-      return expect(verifyConditions(config))
+      return expect(verifyConditions(config, context))
         .to.eventually.be.rejectedWith('\'repositoryName\' must be set in the publish config section.');
     });
 
@@ -51,10 +97,22 @@ describe('semantic-release-bitbucket', function() {
         process.env.BITBUCKET_USER = credentials[0].account;
         process.env.BITBUCKET_PASSWORD = credentials[0].password;
       });
-      const config: BitbucketPublishConfig = {
-        repositoryName: 'test',
+      const context: SemanticReleaseContext = {
+        logger: {
+          // tslint:disable-next-line:no-empty
+          log: (message: string) => {}},
+        options: {
+          branch: '',
+          noCi: true,
+          publish: [{
+            path: '@iteratec/semantic-release-bitbucket',
+            repositoryName: 'test',
+          } as BitbucketPublishConfig & SemanticReleasePlugin],
+          repositoryUrl: '',
+          tagFormat: '',
+        },
       };
-      return expect(verifyConditions(config)).to.eventually.be.fulfilled;
+      return expect(verifyConditions(config, context)).to.eventually.be.fulfilled;
     });
 
   });

@@ -1,39 +1,25 @@
 import btoa from 'btoa';
 import fetch from 'node-fetch';
 
+import SemanticReleaseConfig from '../@types/SemanticReleaseConfig';
+import SemanticReleaseContext from '../@types/SemanticReleaseContext';
 import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
-import { PublishParams } from '../PublishParams';
 
-export async function publish(pluginConfig: BitbucketPublishConfig, params: PublishParams) {
+export async function publish(pluginConfig: SemanticReleaseConfig, context: SemanticReleaseContext) {
   const encodedCreds = btoa(`${process.env.BITBUCKET_USER}:${process.env.BITBUCKET_PASSWORD}`);
-  const bitbucketUrl = pluginConfig.bitbucketUrl ?
-    pluginConfig.bitbucketUrl.endsWith('/') ? pluginConfig.bitbucketUrl :
-    `${pluginConfig.bitbucketUrl}/` : 'https://api.bitbucket.org/2.0/';
-  const owner = pluginConfig.teamName ? pluginConfig.teamName : process.env.BITBUCKET_USER;
-  const repoUrl = `${bitbucketUrl}repositories/${owner}/${pluginConfig.repositoryName}`;
+  const publishConfig = context.options.publish!
+    .find((p) => p.path === '@iteratec/semantic-release-bitbucket')! as BitbucketPublishConfig;
+  const bitbucketUrl = publishConfig.bitbucketUrl ?
+    publishConfig.bitbucketUrl.endsWith('/') ? publishConfig.bitbucketUrl :
+    `${publishConfig.bitbucketUrl}/` : 'https://api.bitbucket.org/2.0/';
+  const owner = publishConfig.teamName ? publishConfig.teamName : process.env.BITBUCKET_USER;
+  const repoUrl = `${bitbucketUrl}repositories/${owner}/${publishConfig.repositoryName}`;
 
-  const branchInfo = await fetch(`${repoUrl}/refs/branches/${params.options.branch}`, {
-    headers: {Authorization: `Basic ${encodedCreds}`},
-  })
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error(response.statusText);
-      }
-    }).then((data) => {
-      return data;
-    })
-    .catch((error) => {
-      throw new Error(error);
-    });
-  // tslint:disable-next-line:max-line-length
-  params.logger.log(`CommitId retrieved from Bitbucket is ${branchInfo.target.hash}, commitId provided as input is ${params.nextRelease.gitHead!}`);
   return fetch(`${repoUrl}/refs/tags`, {
     body: JSON.stringify({
-      name: params.nextRelease.gitTag,
+      name: context.nextRelease!.gitTag,
       target: {
-        hash: branchInfo.target.hash,
+        hash: context.nextRelease!.gitHead!,
       },
     }),
     headers: {'Authorization': `Basic ${encodedCreds}`, 'Content-Type': 'application/json'},

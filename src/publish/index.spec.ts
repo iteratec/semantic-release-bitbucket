@@ -3,6 +3,8 @@ import chaiAsPromised from 'chai-as-promised';
 import * as keytar from 'keytar';
 
 import { publish } from '.';
+import SemanticReleaseContext from '../@types/SemanticReleaseContext';
+import { SemanticReleasePlugin } from '../@types/SemanticReleasePlugin';
 import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
 
 describe('semantic-release-bitbucket', function() {
@@ -22,10 +24,13 @@ describe('semantic-release-bitbucket', function() {
         process.env.BITBUCKET_USER = credentials[0].account;
         process.env.BITBUCKET_PASSWORD = credentials[0].password;
       });
-      const config: BitbucketPublishConfig = {
-        repositoryName: 'test',
+      const config = {
+        branch: '',
+        noCi: true,
+        repositoryUrl: '',
+        tagFormat: '',
       };
-      const params = {
+      const context: SemanticReleaseContext = {
         logger: {
           // tslint:disable-next-line:no-empty
           log: (message: string) => {},
@@ -35,11 +40,17 @@ describe('semantic-release-bitbucket', function() {
           notes: '',
         },
         options: {
-          branch: 'master',
+          branch: '',
+          noCi: true,
+          publish: [{
+            path: '@iteratec/semantic-release-bitbucket',
+            repositoryName: '',
+          } as BitbucketPublishConfig & SemanticReleasePlugin],
           repositoryUrl: '',
+          tagFormat: '',
         },
       };
-      return expect(publish(config, params)).to.eventually.be.true;
+      return expect(publish(config, context)).to.eventually.be.true;
     });
   });
 });
