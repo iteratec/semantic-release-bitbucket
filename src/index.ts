@@ -1,7 +1,7 @@
 import SemanticReleaseConfig from './@types/SemanticReleaseConfig';
 import SemanticReleaseContext from './@types/SemanticReleaseContext';
 import { publish as publishBitbucket } from './publish';
-import { verifyConditions as verifyBitbucket} from './verifyConfig';
+import { verifyConditions as verifyBitbucket} from './verifyConditions';
 
 let verified: boolean;
 
