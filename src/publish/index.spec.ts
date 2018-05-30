@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import * as keytar from 'keytar';
 
 import { publish } from '.';
-import { BitbucketPluginConfig } from '../bitbucketPlugnConfig';
+import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
 
 describe('semantic-release-bitbucket', function() {
   before(function() {
@@ -22,11 +22,8 @@ describe('semantic-release-bitbucket', function() {
         process.env.BITBUCKET_USER = credentials[0].account;
         process.env.BITBUCKET_PASSWORD = credentials[0].password;
       });
-      const config: BitbucketPluginConfig = {
-        publish: {
-          repositoryName: 'test',
-        },
-        verifyConditions: [''],
+      const config: BitbucketPublishConfig = {
+        repositoryName: 'test',
       };
       const params = {
         logger: {
@@ -35,7 +32,7 @@ describe('semantic-release-bitbucket', function() {
         },
         nextRelease: {
           gitTag: '1.0.0',
-          notes: 'trallalala',
+          notes: '',
         },
         options: {
           branch: 'master',

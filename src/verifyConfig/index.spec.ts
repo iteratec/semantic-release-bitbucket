@@ -3,7 +3,7 @@ import chaiAsPromised from 'chai-as-promised';
 import * as keytar from 'keytar';
 
 import { verifyConditions } from '.';
-import { BitbucketPluginConfig } from '../bitbucketPlugnConfig';
+import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
 
 describe('semantic-release-bitbucket', function() {
 
@@ -19,11 +19,8 @@ describe('semantic-release-bitbucket', function() {
     });
 
     it('should fail if BITBUCKET_USER is not set', function() {
-      const config: BitbucketPluginConfig = {
-        publish: {
-          repositoryName: '',
-        },
-        verifyConditions: [''],
+      const config: BitbucketPublishConfig = {
+        repositoryName: '',
       };
       return expect(verifyConditions(config))
         .to.eventually.be.rejectedWith('Environment variable BITBUCKET_USER is not set.');
@@ -31,11 +28,8 @@ describe('semantic-release-bitbucket', function() {
 
     it('should fail if BITBUCKET_PASSWORD is not set', function() {
       process.env.BITBUCKET_USER = 'test';
-      const config: BitbucketPluginConfig = {
-        publish: {
-          repositoryName: '',
-        },
-        verifyConditions: [''],
+      const config: BitbucketPublishConfig = {
+        repositoryName: '',
       };
       return expect(verifyConditions(config))
         .to.eventually.be.rejectedWith('Environment variable BITBUCKET_PASSWORD is not set.');
@@ -44,27 +38,21 @@ describe('semantic-release-bitbucket', function() {
     it('should fail if the name of the repository is not set in the config', function() {
       process.env.BITBUCKET_USER = 'test';
       process.env.BITBUCKET_PASSWORD = 'test';
-      const config: BitbucketPluginConfig = {
-        publish: {
-          repositoryName: '',
-        },
-        verifyConditions: [''],
+      const config: BitbucketPublishConfig = {
+        repositoryName: '',
       };
       return expect(verifyConditions(config))
         .to.eventually.be.rejectedWith('\'repositoryName\' must be set in the publish config section.');
     });
 
-    it.skip('should attempt to login', async function() {
+    it('should attempt to login', async function() {
       await keytar.findCredentials('bitbucket').then((credentials) => {
         // In the typings for keytar in version 4.2.1 findCredentials() returns an object instead of an array
         process.env.BITBUCKET_USER = credentials[0].account;
         process.env.BITBUCKET_PASSWORD = credentials[0].password;
       });
-      const config: BitbucketPluginConfig = {
-        publish: {
-          repositoryName: 'test',
-        },
-        verifyConditions: [''],
+      const config: BitbucketPublishConfig = {
+        repositoryName: 'test',
       };
       return expect(verifyConditions(config)).to.eventually.be.fulfilled;
     });

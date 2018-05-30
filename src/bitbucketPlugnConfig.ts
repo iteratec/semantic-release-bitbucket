@@ -1,8 +1,10 @@
+export interface BitbucketPublishConfig {
+  bitbucketUrl?: string;
+  repositoryName: string;
+  teamName?: string;
+}
+
 export interface BitbucketPluginConfig {
   verifyConditions: string[];
-  publish: {
-    bitbucketUrl?: string;
-    repositoryName: string;
-    teamName?: string;
-  };
+  publish: BitbucketPublishConfig;
 }

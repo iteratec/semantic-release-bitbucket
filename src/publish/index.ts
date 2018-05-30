@@ -1,10 +1,11 @@
 import btoa from 'btoa';
 import fetch from 'node-fetch';
 
-import { BitbucketPluginConfig } from '../bitbucketPlugnConfig';
+import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
 
 interface NextRelease {
   gitTag: string;
+  gitHead?: string;
   notes: string;
 }
 
@@ -23,13 +24,13 @@ interface Params {
   logger: Logger;
 }
 
-export async function publish(pluginConfig: BitbucketPluginConfig, params: Params) {
+export async function publish(pluginConfig: BitbucketPublishConfig, params: Params) {
   const encodedCreds = btoa(`${process.env.BITBUCKET_USER}:${process.env.BITBUCKET_PASSWORD}`);
-  const bitbucketUrl = pluginConfig.publish.bitbucketUrl ?
-    pluginConfig.publish.bitbucketUrl.endsWith('/') ? pluginConfig.publish.bitbucketUrl :
-    `${pluginConfig.publish.bitbucketUrl}/` : 'https://api.bitbucket.org/2.0/';
-  const owner = pluginConfig.publish.teamName ? pluginConfig.publish.teamName : process.env.BITBUCKET_USER;
-  const repoUrl = `${bitbucketUrl}repositories/${owner}/${pluginConfig.publish.repositoryName}`;
+  const bitbucketUrl = pluginConfig.bitbucketUrl ?
+    pluginConfig.bitbucketUrl.endsWith('/') ? pluginConfig.bitbucketUrl :
+    `${pluginConfig.bitbucketUrl}/` : 'https://api.bitbucket.org/2.0/';
+  const owner = pluginConfig.teamName ? pluginConfig.teamName : process.env.BITBUCKET_USER;
+  const repoUrl = `${bitbucketUrl}repositories/${owner}/${pluginConfig.repositoryName}`;
 
   const branchInfo = await fetch(`${repoUrl}/refs/branches/${params.options.branch}`, {
     headers: {Authorization: `Basic ${encodedCreds}`},
@@ -46,7 +47,8 @@ export async function publish(pluginConfig: BitbucketPluginConfig, params: Param
     .catch((error) => {
       throw new Error(error);
     });
-
+  // tslint:disable-next-line:max-line-length
+  params.logger.log(`CommitId retrieved from Bitbucket is ${branchInfo.target.hash}, commitId provided as input is ${params.nextRelease.gitHead!}`);
   return fetch(`${repoUrl}/refs/tags`, {
     body: JSON.stringify({
       name: params.nextRelease.gitTag,
