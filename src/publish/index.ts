@@ -2,29 +2,9 @@ import btoa from 'btoa';
 import fetch from 'node-fetch';
 
 import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
+import { PublishParams } from '../PublishParams';
 
-interface NextRelease {
-  gitTag: string;
-  gitHead?: string;
-  notes: string;
-}
-
-interface Options {
-  branch: string;
-  repositoryUrl: string;
-}
-
-interface Logger {
-  log: (message: string) => void;
-}
-
-interface Params {
-  options: Options;
-  nextRelease: NextRelease;
-  logger: Logger;
-}
-
-export async function publish(pluginConfig: BitbucketPublishConfig, params: Params) {
+export async function publish(pluginConfig: BitbucketPublishConfig, params: PublishParams) {
   const encodedCreds = btoa(`${process.env.BITBUCKET_USER}:${process.env.BITBUCKET_PASSWORD}`);
   const bitbucketUrl = pluginConfig.bitbucketUrl ?
     pluginConfig.bitbucketUrl.endsWith('/') ? pluginConfig.bitbucketUrl :

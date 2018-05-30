@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 
 import { BitbucketPublishConfig } from '../bitbucketPlugnConfig';
 
-export async function verifyConditions(pluginConfig: BitbucketPublishConfig) {
+export async function verifyConditions(pluginConfig: BitbucketPublishConfig): Promise<boolean> {
   if (!process.env.BITBUCKET_USER) {
     throw new Error('Environment variable BITBUCKET_USER is not set.');
   }
