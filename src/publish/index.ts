@@ -27,7 +27,9 @@ export async function publish(pluginConfig: SemanticReleaseConfig, context: Sema
   })
   .then((response) => {
     if (response.ok) {
-      return true;
+      return {
+        publishedTag: context.nextRelease!.gitTag,
+      };
     } else {
       throw new Error(`Error HTTP${response.status} ${response.statusText}`);
     }
