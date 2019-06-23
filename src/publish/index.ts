@@ -18,6 +18,7 @@ export async function publish(pluginConfig: SemanticReleaseConfig, context: Sema
   return fetch(`${repoUrl}/refs/tags`, {
     body: JSON.stringify({
       name: context.nextRelease!.gitTag,
+      message: context.nextRelease!.notes,
       target: {
         hash: context.nextRelease!.gitHead!,
       },
