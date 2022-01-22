@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "btoa": "^1.2.1",
-    "node-fetch": "^2.1.2"
+    "node-fetch": "^3.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^6.2.0",
